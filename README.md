@@ -76,6 +76,8 @@ for the future.
 
 ### Why Pessimistic
 
+
+
 - Avoid position health calculation by 3rd party (FHE or MPC solution too expensive).
 - Avoid active participation / keepers.
 
