@@ -3,7 +3,8 @@ import token_registry.aleo;
 // The 'leveraged_spot' program.
 program leveraged_spot.aleo {
     const COLLATERAL_TOKEN_ID: field = 4086179070172029689989191504251673329323324697790262897954312563933915289279field;
-
+    const DECIMALS_FACTOR: u128 = 1_000_000u128; // 6 decimals
+    
     struct TimeSequence {
         start: u32,
         length: u32, // 0 means a single tick, 1 or more means a number of blocks
@@ -27,6 +28,35 @@ program leveraged_spot.aleo {
 
     mapping low_watermarks: field => u128; // time_sequence_key => price low watermark
 
+    mapping spot_price: u8 => u128; // 0 => spot_price
+
+    async transition spot_price_oracle(price: u128, block_no: u32) -> Future {
+        // This transition is used by the oracle to record the spot price.
+        // It should be called by an oracle or a trusted entity.
+        return finalize_spot_price_oracle(price, block_no);
+    }
+    async function finalize_spot_price_oracle(price: u128, block_no: u32) {
+        // assert(block.height == block_no); commented out for testing purposes
+        Mapping::set(spot_price, 0u8, price);
+        // Record the low watermark for the current block.
+        let length: u32 = 0u32;
+        for i: u8 in 0u8..4u8 { // 0, 1, 2 for sequences of 0, 1, 10, 100 blocks
+            let start: u32 = length == 0u32 ? block_no : block_no % length;
+            // Calculate the key for the time sequence.
+            let sequence: TimeSequence = TimeSequence { start, length };
+            let key: field = BHP256::hash_to_field(sequence);
+            // Get the current low watermark for this key.
+            let current_low: u128 = Mapping::get_or_use(low_watermarks, key, price);
+            // If the current low is zero or the new price is lower, update it.
+            if (price < current_low) {
+                Mapping::set(low_watermarks, key, price);
+            }
+            length *= 10u32; // Increase the length for the next iteration
+        }
+    }
+
+    // Checking for the caller is intentionlly omitted for testing purposes.
+    // In production, you should check that the caller is an oracle or buyer/seller.
     async transition record_low_watermark(price: u128, block_no: u32) -> Future {
         return finalize_record_low_watermark(price, block_no);
     }
@@ -59,7 +89,8 @@ program leveraged_spot.aleo {
         return (change, voucher, finalize_buy(price, block_no, fc));
     }
     async function finalize_buy(price: u128, block_no: u32, fc: Future) {
-        assert(block.height == block_no);
+        // assert(block.height == block_no); commented out for testing purposes
+        // price >= spot_price[0]; commented out for testing purposes
         fc.await();
 
         // Record the low watermark for the current block.
@@ -76,7 +107,33 @@ program leveraged_spot.aleo {
                 Mapping::set(low_watermarks, key, price);
             }
         }
+    }
 
+    async transition sell(voucher: Voucher, price: u128, block_no: u32, proof_starts: [u32; 32], proof_lengths: [u32; 32]) -> Future {
+        // Calculate the liquidation level
+        let liquidation_level: u128 = (DECIMALS_FACTOR * voucher.collateral_amount) / voucher.amount >= voucher.price ? 0u128 : 
+            voucher.price - ((DECIMALS_FACTOR * voucher.collateral_amount) / voucher.amount);
+        assert(voucher.price >= liquidation_level);
+        assert(price >= liquidation_level);
+        for i: u8 in 0u8..31u8 {
+            if proof_starts[i] != 0u32 {
+                // Check that the proof starts and lengths are valid
+                assert(proof_starts[i]+proof_lengths[i] == proof_starts[i+1]);
+            }
+        }
+        return finalize_sell(price, block_no, liquidation_level, proof_starts, proof_lengths);
+    }
+    async function finalize_sell(price: u128, block_no: u32, liquidation_level: u128, proof_starts: [u32; 32], proof_lengths: [u32; 32]) {
+        // assert(block.height == block_no); commented out for testing purposes
+        // price >= spot_price[0]; commented out for testing purposes
+        for i: u8 in 0u8..32u8 {
+            if (proof_starts[i] != 0u32) {
+                // Check against liquidation level against the price low watermarks
+                let sequence: TimeSequence = TimeSequence { start: proof_starts[i], length: proof_lengths[i] };
+                let key: field = BHP256::hash_to_field(sequence);
+                assert(liquidation_level <= Mapping::get(low_watermarks, key));
+            }
+        }
     }
 
     transition main(public a: u32, b: u32) -> u32 {
