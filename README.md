@@ -12,6 +12,10 @@ This inversion—“liquidate by default, prove otherwise”—ensures that no a
 
 Let's not make a mistake: ***delinquent trading positions should be liquidated***. Yet, we should ***not allow anyone to induce liquidations*** via market manipulation, MEV or Flash Loans.
 
+The problem in on-chain trading is that the liquidation points are public and the attacker can use Spot Market Manipulation, MEV or Flash Loans to trigger liquidations:
+
+![problem](./images/problem.png)
+
 In general on-chain Leveraged Trading systems would have two components:
 - Marketplace, such Order Book or Automated Market Maker (AMM). This allows
 for price discovery and order execution.
@@ -20,7 +24,7 @@ for price discovery and order execution.
 This prototype implements the latter, which can be combined with any Order Book
 Marketplace. We are showing this in an example of Leveraged Spot Trading system, although it is not limited to it.
 
-![levtrsys](levtrsys.png)
+![levtrsys](./images/levtrsys.png)
 
 ### What this is and what it's not
 
@@ -46,7 +50,7 @@ exits flat, with no intermediate changes of position size and direction.
 To implement this tracking, we need an oracle. The spot price trades serve
 as a perfect oracle, which is the reason why Leveraged Spot Trading protocols are combined with non-leveraged (fully funded) Spot trading.
 
-![spotandvirtlev](../images/spotandvirtlev.png)
+![spotandvirtlev](./images/spotandvirtlev.png)
 
 ### Leveraged Perpetual Futures (Perps) - anatomy
 
@@ -79,7 +83,7 @@ be used in the implementation of the Short case.
 
 ### Trade History Record
 
-![timeseriesstore](timeseriesstore.png)
+![timeseriesstore](./images/timeseriesstore.png)
 
 ### Position funding
 
@@ -98,5 +102,7 @@ be used in the implementation of the Short case.
 - Loop through order history
 
 - Order history shortening
+
+![workflow](./images/workflow.png)
 
 ## Future Work
