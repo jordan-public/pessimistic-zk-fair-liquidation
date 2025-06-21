@@ -58,7 +58,16 @@ program leveraged_spot.aleo {
     async function finalize_initialize(f1: Future, f2: Future, caller: address) {
         f1.await();
         f2.await();
-    }
+
+        // Fill mock sequences
+        let sequence: TimeSequence = TimeSequence { start: 9u32, length: 1u32 };
+        let key: field = BHP256::hash_to_field(sequence);
+        Mapping::set(low_watermarks, key, 100_000_000u128); // Set a mock low watermark for the sequence starting at block 10 with length 1
+        sequence = TimeSequence { start: 10u32, length: 10u32 };
+        key = BHP256::hash_to_field(sequence);
+        Mapping::set(low_watermarks, key, 200_000_000u128); // Set a mock low watermark for the sequence starting at block 20 with length 1
+        // A liqudation level of 90_000_000 (90 full tokens) should pass for the sequence starting at block 10 with length 1
+     }
 
     async transition spot_price_oracle(price: u128, block_no: u32) -> Future {
         // This transition is used by the oracle to record the spot price.

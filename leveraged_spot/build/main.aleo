@@ -49,6 +49,12 @@ finalize initialize:
     input r2 as address.public;
     await r0;
     await r1;
+    cast 9u32 1u32 into r3 as TimeSequence;
+    hash.bhp256 r3 into r4 as field;
+    set 100000000u128 into low_watermarks[r4];
+    cast 10u32 10u32 into r5 as TimeSequence;
+    hash.bhp256 r5 into r6 as field;
+    set 200000000u128 into low_watermarks[r6];
 
 function time_sequence_key:
     input r0 as u32.private;

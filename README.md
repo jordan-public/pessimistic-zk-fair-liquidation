@@ -1,5 +1,9 @@
 # Pessimistic ZK Fair Liquidation: Price Attack-free Leveraged Trading
 
+## Demo and Video
+
+The demo instructions and the video are [here](./demo/README.md).
+
 ## Abstract
 
 Leveraged trading on-chain is challenging because everyone’s positions and stop-loss levels are publicly visible, leaving traders exposed to front-running, MEV, and flash-loan attacks that can unfairly force liquidations.
