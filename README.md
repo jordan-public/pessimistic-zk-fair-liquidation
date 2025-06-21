@@ -10,6 +10,22 @@ This inversion—“liquidate by default, prove otherwise”—ensures that no a
 
 ## Introduction
 
+Let's not make a mistake: ***delinquent trading positions should be liquidated***.
+
+### What this is and what it's not
+
+This is:
+
+- a marketplace for leveraged trading and fair liquidations using our novel Pessimistic ZK technique,
+- NOT attempting order privacy. Such feature can be combined into this project from techniques already available in the Awesome Aleo collection,
+- A marketplace that can be combined with any Order Book. Both Makers and Takers can take advantage of the liquidation fairness achieved,
+- NOT a tool to evade liquidation of truly delinquent positions,
+- a tool to avoid positions being liquidated by market manipulations.
+
+## Leveraged Spot Trading
+
+## Leveraged Perpetual Futures (Perps)
+
 ## Solution
 
 ## Implementation
