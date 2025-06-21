@@ -2,13 +2,11 @@
 
 ## Abstract
 
-Leveraged trading is difficult to implement on-chain, as all participants' information is public, making them vulnerable to market manipulations. Such manipulations cause
-leveraged positions to be unfairly liquidated, because the attacker can easily discover the liquidation price points and/or stop orders. They range from temporary positions to manipulate spot markets, MEV attacks and Flash Loan attacks.
+Leveraged trading on-chain is challenging because everyone’s positions and stop-loss levels are publicly visible, leaving traders exposed to front-running, MEV, and flash-loan attacks that can unfairly force liquidations.
 
-To prevent such unfairness, we implemented a novel technique leveraging Zero Knowledge (ZK) technology, in which these liquidation points and/or stop orders stay private.
-Having such information private makes the fair liquidation difficult. To solve this, our implementation pessimistically assumes that the position in question is a priory
-liquidated. Then the burden of proof lays with the position holder to demonstrate that no liquidation could possibly occur and recover their funds. Such proof reliably
-works due to ZK.
+To eliminate this attack vector, we’ve developed a novel zero-knowledge approach that keeps each position’s liquidation thresholds and stop orders completely private. Instead of waiting for an attacker to trigger a forced sale, our system ***assumes every position is already liquidated*** and shifts the burden of proof onto the trader: they must supply a ZK proof that, under no possible market scenario, their position could have been liquidated. Only once that proof verifies do they recover their funds.
+
+This inversion—“liquidate by default, prove otherwise”—ensures that no adversary can ever discover or manipulate another trader’s liquidation point, making on-chain leverage both safe and fair.
 
 ## Introduction
 
