@@ -76,10 +76,36 @@ for the future.
 
 ### Why Pessimistic
 
+We have seen before "Optimistic Rollups", "Optimistic Flash Loans", but why "Pessimistic" and how is this fair?
 
+The problem of liquidation in real time requires a solution with active participation. To add privacy to it, we would need to use Fully Homomorphic Encryption (FHE) or Multi Party Computation (MPC), but this would be too
+expensive and slow, causing additional delay in liquidations, making the
+system even less capital-efficient.
 
-- Avoid position health calculation by 3rd party (FHE or MPC solution too expensive).
-- Avoid active participation / keepers.
+So, how do we solve the problem od liquidation without active participation?
+Here is the outline:
+
+```
+Protocol: 
+- You placed a trade, 
+- we’ll assume you are delinquent,
+- but, keep trading - you are already (assumed) liquidated!
+
+Trader:
+- I am not delinquent, here is a ZK proof!
+
+Protocol: 
+- OK, my precautionary mistake, here is your collateral back.
+```
+
+To clarify:
+- The trader has to purchase Collateral Tokens using actual asset Tokens, and deposit such collateral.
+- As soon as the trader initiates a trade, the protocol "burns" the collateral, assuming immediate Trader's delinquency.
+- If and when the Trader can exit the trade by proving that it "could not have been delinquent", the protocol re-mints the burned collateral in addition to the accrued profit/loss in the trade.
+
+Here is the diagram:
+
+![workflow](./images/workflow.png)
 
 
 ## Implementation
@@ -90,29 +116,46 @@ be used in the implementation of the Short case.
 
 ### Trade History Record
 
+It would be very inefficient if the prover were to go through all trades that
+occurred while the Trader was in position in order to prove that the position
+is not subject to liquidation.
+
+Instead, the protocol keeps it's "Tick Mill" by keeping price low watermark
+in sequences of multiple blocks. As soon as a new trade comes in, the protocol
+updates all such sequences. This is not much of an overhead (log-space) as
+these sequences are constant multiple in size of shorter such sequences (for example 10):
+
 ![timeseriesstore](./images/timeseriesstore.png)
+
+Then, the proof would go through a ```log(n)``` of ```n``` items instead of whole ```n```. Such proof becomes feasible even for positions of very long durations.
 
 ### Position funding
 
-- Collateral tokens
+- Collateral Tokens are implemented using the Aleo Token Registry program. Note
+that the protocol is authorized to mint and burn such Collateral Tokens, of 
+course in a controlled manner, governed by its program.
 
-- Collateral minting from funding
+- The protocol provides a one-to-one exchange between actual assets (USDC) and
+Collateral Tokens, in both directions.
 
-- Collateral burn -> record of deposit
+- When Collateral Tokens are deposited, the depositor receives a private
+Voucher (private Aleo Record), which could be later redeemed.
 
-- ZK Proof -> collateral mint
-
-- Collateral burning from refund
+- As soon as the ZK Proof us generated off-chain, the protocol closes the position on-chain after verifying this proof. The prover has to receive an
+appropriate set of low price watermark block sequences to prove it's conjecture. In this process, the Voucher is fed to the off-chain proof, which
+mints private Collateral Tokens in the amount of the previously burned collateral + the profit (- the loss) of the trade.
 
 ### Proof of non-delinquency
 
-- Loop through order history
+The prover has to loop through the given sequences as public inputs
+and assert / prove that the low watermark sequences cover the entire duration of the trade. In addition, no given low watermark should be lower than the
+liquidation level of the trade position.
 
-- Order history shortening
+It is the responsibility of the front-end of the application to gather such
+sequences of low watermarks and feed them in a sorted order to minimize the
+computation required to generate the proof.
 
-![workflow](./images/workflow.png)
-
-## Surprising additional benefit
+## Surprising additional benefits
 
 As already mentioned, keeping the liquidation levels private protects the trader against:
 - Market Manipulation
@@ -123,4 +166,15 @@ However, in addition we get the benefit of no delays in the liquidation process.
 
 ![addlbenefit](./images/addlbenefit.png)
 
+Finally, this system can be used even for non-leveraged trading, to protect Stop Loss orders. Even Stop Loss orders are subject to "insider information"
+attack. Long time ago, a typical crime would have been to call the institutional broker over the phone and ask them to (illegally) tell the
+Stop Order prices. Pessimistic ZK can fix this as well.
+
 ## Future Work
+
+Note that this prototype only implements the Liquidation Engine. To complete
+this as a usable application we need to fully implement the following:
+- Order Book for Spot and Leveraged trading, which records watermarks for both.
+- The mirror image of the Long Position Liquidation Engine, but for Short positions.
+- Perpetual Futures (Perp) Order Book, if we want to implement Perp trading.
+- Stop Loss system, if we want to implement Stop Loss orders.
