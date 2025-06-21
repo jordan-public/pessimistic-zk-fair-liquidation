@@ -110,7 +110,7 @@ program leveraged_spot.aleo {
         }
     }
 
-    async transition sell(voucher: Voucher, price: u128, block_no: u32, proof_starts: [u32; 32], proof_lengths: [u32; 32]) -> Future {
+    async transition sell(voucher: Voucher, price: u128, block_no: u32, proof_starts: [u32; 32], proof_lengths: [u32; 32]) -> (token_registry.aleo/Token, Future) {
         // Calculate the liquidation level
         let liquidation_level: u128 = (DECIMALS_FACTOR * voucher.collateral_amount) / voucher.amount >= voucher.price ? 0u128 : 
             voucher.price - ((DECIMALS_FACTOR * voucher.collateral_amount) / voucher.amount);
@@ -122,9 +122,16 @@ program leveraged_spot.aleo {
                 assert(proof_starts[i]+proof_lengths[i] == proof_starts[i+1]);
             }
         }
-        return finalize_sell(price, block_no, liquidation_level, proof_starts, proof_lengths);
+        let (payout, f) : (token_registry.aleo/Token, Future) = token_registry.aleo/mint_private(
+            COLLATERAL_TOKEN_ID,
+            voucher.owner,
+            voucher.amount + ((price - voucher.price) * voucher.amount) / DECIMALS_FACTOR,
+            false,
+            0u32
+        );
+        return (payout, finalize_sell(f, price, block_no, liquidation_level, proof_starts, proof_lengths));
     }
-    async function finalize_sell(price: u128, block_no: u32, liquidation_level: u128, proof_starts: [u32; 32], proof_lengths: [u32; 32]) {
+    async function finalize_sell(f: Future, price: u128, block_no: u32, liquidation_level: u128, proof_starts: [u32; 32], proof_lengths: [u32; 32]) {
         // assert(block.height == block_no); commented out for testing purposes
         // price >= spot_price[0]; commented out for testing purposes
         for i: u8 in 0u8..MAX_PROOF_LENGTH {
@@ -135,6 +142,7 @@ program leveraged_spot.aleo {
                 assert(liquidation_level <= Mapping::get(low_watermarks, key));
             }
         }
+        f.await();
     }
 
     transition main(public a: u32, b: u32) -> u32 {
