@@ -73,6 +73,10 @@ for the future.
 
 ## Implementation
 
+In this prototype we are implementing management of Long Leveraged Positions. The Short Leveraged Position management is simply a mirror image. Whenever we
+mention "price low watermark", in the Long case, "price high watermark" would
+be used in the implementation of the Short case.
+
 ### Trade History Record
 
 ![timeseriesstore](timeseriesstore.png)
