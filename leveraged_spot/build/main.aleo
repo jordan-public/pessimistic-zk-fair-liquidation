@@ -39,22 +39,21 @@ mapping spot_price:
 function initialize:
     call token_registry.aleo/register_token 4086179070172029689989191504251673329323324697790262897954312563933915289279field 318453955671054116610412u128 1129270348u128 6u8 10000000000000000u128 false leveraged_spot.aleo into r0;
     div 10000000000000000u128 10u128 into r1;
-    call token_registry.aleo/mint_public 4086179070172029689989191504251673329323324697790262897954312563933915289279field self.caller 10000000000000000u128 0u32 into r2;
-    async initialize r0 r2 self.caller into r3;
-    output r3 as leveraged_spot.aleo/initialize.future;
+    call token_registry.aleo/mint_private 4086179070172029689989191504251673329323324697790262897954312563933915289279field self.signer r1 false 0u32 into r2 r3;
+    async initialize r0 r3 into r4;
+    output r4 as leveraged_spot.aleo/initialize.future;
 
 finalize initialize:
     input r0 as token_registry.aleo/register_token.future;
-    input r1 as token_registry.aleo/mint_public.future;
-    input r2 as address.public;
+    input r1 as token_registry.aleo/mint_private.future;
     await r0;
     await r1;
-    cast 9u32 1u32 into r3 as TimeSequence;
-    hash.bhp256 r3 into r4 as field;
-    set 100000000u128 into low_watermarks[r4];
-    cast 10u32 10u32 into r5 as TimeSequence;
-    hash.bhp256 r5 into r6 as field;
-    set 200000000u128 into low_watermarks[r6];
+    cast 9u32 1u32 into r2 as TimeSequence;
+    hash.bhp256 r2 into r3 as field;
+    set 100000000u128 into low_watermarks[r3];
+    cast 10u32 10u32 into r4 as TimeSequence;
+    hash.bhp256 r4 into r5 as field;
+    set 200000000u128 into low_watermarks[r5];
 
 function time_sequence_key:
     input r0 as u32.private;

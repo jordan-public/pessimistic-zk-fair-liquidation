@@ -23,3 +23,8 @@ This not only installs the program, but also prepares it for testing as follows:
     - Block 9 for 1 block with price low watermark of 100.00.
     - Block 10 for 10 blocks with price low watermark of 200.00.
 - This sequence should accommodate proving that a trade from block 9 to block 20 does not get liquidated if the liquidation price is 90.00. Note that the price of 90.00 is represented as 90_000_000u128 (6 decimals).
+
+To achieve a liquidation level of 90.00 we should Buy at price of 100.00 and supply collateral that supports a loss of 10.00 at quantity of 10.00 (10_000_000u128), which is
+a 100.00 (100_000_000u128) Collateral tokens.
+
+

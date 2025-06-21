@@ -51,11 +51,17 @@ program leveraged_spot.aleo {
 
         // Distribute supply intended for testing.
         let supply: u128 = max_supply / 10u128; // 10% of the total supply is minted for testing.
-        let f2: Future = token_registry.aleo/mint_public(COLLATERAL_TOKEN_ID, self.caller, max_supply, 0u32);
+        let (payout, f2) : (token_registry.aleo/Token, Future) = token_registry.aleo/mint_private(
+            COLLATERAL_TOKEN_ID,
+            self.signer,
+            supply,
+            false,
+            0u32
+        );
 
-        return finalize_initialize(f1, f2, self.caller);
+        return finalize_initialize(f1, f2);
     }
-    async function finalize_initialize(f1: Future, f2: Future, caller: address) {
+    async function finalize_initialize(f1: Future, f2: Future) {
         f1.await();
         f2.await();
 
