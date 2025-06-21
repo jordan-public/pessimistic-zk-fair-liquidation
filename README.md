@@ -79,6 +79,7 @@ for the future.
 - Avoid position health calculation by 3rd party (FHE or MPC solution too expensive).
 - Avoid active participation / keepers.
 
+
 ## Implementation
 
 In this prototype we are implementing management of Long Leveraged Positions. The Short Leveraged Position management is simply a mirror image. Whenever we
@@ -108,5 +109,16 @@ be used in the implementation of the Short case.
 - Order history shortening
 
 ![workflow](./images/workflow.png)
+
+## Surprising additional benefit
+
+As already mentioned, keeping the liquidation levels private protects the trader against:
+- Market Manipulation
+- MEV
+- Flash Loans
+
+However, in addition we get the benefit of no delays in the liquidation process. In classical liquidation there is a delay between the time the liquidation is triggered and actually executed. This is a source of lower capital efficiency, which The Pessimistic ZK Fair Liquidation alleviates:
+
+![addlbenefit](./images/addlbenefit.png)
 
 ## Future Work
