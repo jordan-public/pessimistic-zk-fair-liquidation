@@ -4,6 +4,7 @@ import token_registry.aleo;
 program leveraged_spot.aleo {
     const COLLATERAL_TOKEN_ID: field = 4086179070172029689989191504251673329323324697790262897954312563933915289279field;
     const DECIMALS_FACTOR: u128 = 1_000_000u128; // 6 decimals
+    const MAX_PROOF_LENGTH: u8 = 32u8; // Maximum number of sequences
     
     struct TimeSequence {
         start: u32,
@@ -115,7 +116,7 @@ program leveraged_spot.aleo {
             voucher.price - ((DECIMALS_FACTOR * voucher.collateral_amount) / voucher.amount);
         assert(voucher.price >= liquidation_level);
         assert(price >= liquidation_level);
-        for i: u8 in 0u8..31u8 {
+        for i: u8 in 0u8..MAX_PROOF_LENGTH-1u8 {
             if proof_starts[i] != 0u32 {
                 // Check that the proof starts and lengths are valid
                 assert(proof_starts[i]+proof_lengths[i] == proof_starts[i+1]);
@@ -126,7 +127,7 @@ program leveraged_spot.aleo {
     async function finalize_sell(price: u128, block_no: u32, liquidation_level: u128, proof_starts: [u32; 32], proof_lengths: [u32; 32]) {
         // assert(block.height == block_no); commented out for testing purposes
         // price >= spot_price[0]; commented out for testing purposes
-        for i: u8 in 0u8..32u8 {
+        for i: u8 in 0u8..MAX_PROOF_LENGTH {
             if (proof_starts[i] != 0u32) {
                 // Check against liquidation level against the price low watermarks
                 let sequence: TimeSequence = TimeSequence { start: proof_starts[i], length: proof_lengths[i] };
