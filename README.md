@@ -10,7 +10,17 @@ This inversion—“liquidate by default, prove otherwise”—ensures that no a
 
 ## Introduction
 
-Let's not make a mistake: ***delinquent trading positions should be liquidated***.
+Let's not make a mistake: ***delinquent trading positions should be liquidated***. Yet, we should ***not allow anyone to induce liquidations*** via market manipulation, MEV or Flash Loans.
+
+In general on-chain Leveraged Trading systems would have two components:
+- Marketplace, such Order Book or Automated Market Maker (AMM). This allows
+for price discovery and order execution.
+- Position Management and Liquidation system. This allows for leverage via borrowing of real and/or virtual funds and liquidation of delinquent positions.
+
+This prototype implements the latter, which can be combined with any Order Book
+Marketplace. We are showing this in an example of Leveraged Spot Trading system, although it is not limited to it.
+
+![levtrsys](levtrsys.png)
 
 ### What this is and what it's not
 
@@ -25,9 +35,18 @@ This is:
 
 ### Leveraged Spot Trading - anatomy
 
+The Leveraged Spot Trading system can rely on a lender to fund the trader
+in exchange for a fee and/or interest. However, this is not necessary in on-chain implementations. The Leverage can be achieved merely via accounting,
+known as Contracts for Difference (CFD) trading instrument in the traditional
+finance. In it, the Average Entry Price (which could be negative) is maintained throughout the position changes until the position is exited (flat). Finally, the difference between the Exit and the Average Entry Price is paid to the trader, or paid by the trader if negative.
 
+In our implementation we will assume that the trader enters a position and
+exits flat, with no intermediate changes of position size and direction.
 
-![spotandlev](../images/spotandlev.png)
+To implement this tracking, we need an oracle. The spot price trades serve
+as a perfect oracle, which is the reason why Leveraged Spot Trading protocols are combined with non-leveraged (fully funded) Spot trading.
+
+![spotandvirtlev](../images/spotandvirtlev.png)
 
 ### Leveraged Perpetual Futures (Perps) - anatomy
 
@@ -60,6 +79,20 @@ for the future.
 
 ### Position funding
 
+- Collateral tokens
+
+- Collateral minting from funding
+
+- Collateral burn -> record of deposit
+
+- ZK Proof -> collateral mint
+
+- Collateral burning from refund
+
 ### Proof of non-delinquency
+
+- Loop through order history
+
+- Order history shortening
 
 ## Future Work
