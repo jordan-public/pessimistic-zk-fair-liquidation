@@ -3,6 +3,13 @@
   "version": "0.1.0",
   "description": "",
   "license": "MIT",
-  "dependencies": null,
+  "dependencies": [
+    {
+      "name": "token_registry.aleo",
+      "location": "network",
+      "network": "testnet",
+      "path": null
+    }
+  ],
   "dev_dependencies": null
 }
