@@ -36,6 +36,20 @@ mapping spot_price:
     key as u8.public;
     value as u128.public;
 
+function initialize:
+    call token_registry.aleo/register_token 4086179070172029689989191504251673329323324697790262897954312563933915289279field 318453955671054116610412u128 1129270348u128 6u8 10000000000000000u128 false leveraged_spot.aleo into r0;
+    div 10000000000000000u128 10u128 into r1;
+    call token_registry.aleo/mint_public 4086179070172029689989191504251673329323324697790262897954312563933915289279field self.caller 10000000000000000u128 0u32 into r2;
+    async initialize r0 r2 self.caller into r3;
+    output r3 as leveraged_spot.aleo/initialize.future;
+
+finalize initialize:
+    input r0 as token_registry.aleo/register_token.future;
+    input r1 as token_registry.aleo/mint_public.future;
+    input r2 as address.public;
+    await r0;
+    await r1;
+
 function time_sequence_key:
     input r0 as u32.private;
     input r1 as u32.private;
