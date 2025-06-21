@@ -4,7 +4,7 @@ import token_registry.aleo;
 program leveraged_spot.aleo {
     const COLLATERAL_TOKEN_ID: field = 4086179070172029689989191504251673329323324697790262897954312563933915289279field;
     const DECIMALS_FACTOR: u128 = 1_000_000u128; // 6 decimals
-    const MAX_PROOF_LENGTH: u8 = 32u8; // Maximum number of sequences
+    const MAX_PROOF_LENGTH: u8 = 2u8; // Maximum number of sequences - 2 for testing purposes; in production this should be 32
     
     struct TimeSequence {
         start: u32,
@@ -187,10 +187,5 @@ program leveraged_spot.aleo {
             }
         }
         f.await();
-    }
-
-    transition main(public a: u32, b: u32) -> u32 {
-        let c: u32 = a + b;
-        return c;
     }
 }
