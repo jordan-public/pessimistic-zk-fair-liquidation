@@ -1,4 +1,4 @@
-# ZK Fair Leverage
+# Pessimistic ZK Fair Leverage
 
 ## Abstract
 
