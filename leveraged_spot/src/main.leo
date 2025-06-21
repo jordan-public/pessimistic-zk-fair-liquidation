@@ -64,7 +64,7 @@ program leveraged_spot.aleo {
     async function finalize_record_low_watermark(price: u128, block_no: u32) {
         let length: u32 = 0u32;
         for i: u8 in 0u8..4u8 { // 0, 1, 2 for sequences of 0, 1, 10, 100 blocks
-            let start: u32 = length == 0 ? block_no : block_no % length;
+            let start: u32 = length == 0u32 ? block_no : block_no % length;
             // Calculate the key for the time sequence.
             let sequence: TimeSequence = TimeSequence { start, length };
             let key: field = BHP256::hash_to_field(sequence);
@@ -97,7 +97,7 @@ program leveraged_spot.aleo {
         // Record the low watermark for the current block.
         let length: u32 = 0u32;
         for i: u8 in 0u8..4u8 { // 0, 1, 2 for sequences of 0, 1, 10, 100 blocks
-            let start: u32 = length == 0 ? block_no : block_no % length;
+            let start: u32 = length == 0u32 ? block_no : block_no % length;
             // Calculate the key for the time sequence.
             let sequence: TimeSequence = TimeSequence { start, length };
             let key: field = BHP256::hash_to_field(sequence);
@@ -119,7 +119,7 @@ program leveraged_spot.aleo {
         for i: u8 in 0u8..MAX_PROOF_LENGTH-1u8 {
             if proof_starts[i] != 0u32 {
                 // Check that the proof starts and lengths are valid
-                assert(proof_starts[i]+proof_lengths[i] == proof_starts[i+1]);
+                assert(proof_starts[i]+proof_lengths[i] == proof_starts[i+1u8]);
             }
         }
         let (payout, f) : (token_registry.aleo/Token, Future) = token_registry.aleo/mint_private(
