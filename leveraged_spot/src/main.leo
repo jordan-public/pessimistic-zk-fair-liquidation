@@ -65,7 +65,7 @@ program leveraged_spot.aleo {
         f1.await();
         f2.await();
 
-        // Fill mock sequences
+        // Fill mock sequences for testing purposes.
         let sequence: TimeSequence = TimeSequence { start: 9u32, length: 1u32 };
         let key: field = BHP256::hash_to_field(sequence);
         Mapping::set(low_watermarks, key, 100_000_000u128); // Set a mock low watermark for the sequence starting at block 10 with length 1
@@ -141,7 +141,7 @@ program leveraged_spot.aleo {
 
         // Record the low watermark for the current block.
         let length: u32 = 0u32;
-        for i: u8 in 0u8..4u8 { // 0, 1, 2 for sequences of 0, 1, 10, 100 blocks
+        for i: u8 in 0u8..4u8 { // 0, 1, 2 for sequences of 0, 1, 10 blocks; in production this should be at least 7 (million blocks)
             let start: u32 = length == 0u32 ? block_no : block_no % length;
             // Calculate the key for the time sequence.
             let sequence: TimeSequence = TimeSequence { start, length };
