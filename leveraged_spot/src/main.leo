@@ -96,7 +96,7 @@ program leveraged_spot.aleo {
             if (price < current_low) {
                 Mapping::set(low_watermarks, key, price);
             }
-            length *= 10u32; // Increase the length for the next iteration
+            length = length == 0u32 ? 1u32 : length * 10u32; // Increase the length for the next iteration
         }
     }
 
@@ -118,7 +118,7 @@ program leveraged_spot.aleo {
             if (price < current_low) {
                 Mapping::set(low_watermarks, key, price);
             }
-            length *= 10u32; // Increase the length for the next iteration
+            length = length == 0u32 ? 1u32 : length * 10u32; // Increase the length for the next iteration
         }
     }
 
@@ -152,7 +152,7 @@ program leveraged_spot.aleo {
             if (price < current_low) {
                 Mapping::set(low_watermarks, key, price);
             }
-            length *= 10u32; // Increase the length for the next iteration
+            length = length == 0u32 ? 1u32 : length * 10u32; // Increase the length for the next iteration
         }
     }
 
