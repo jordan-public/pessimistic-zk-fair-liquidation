@@ -2,7 +2,6 @@
 set -e
 #set -x
 
-cd ..
 . ./.env
 
 # Help message

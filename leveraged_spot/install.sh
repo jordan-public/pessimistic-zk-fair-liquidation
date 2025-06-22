@@ -25,3 +25,5 @@ leo build
 
 # leo deploy --yes
 leo deploy --yes --path . --network $NETWORK --endpoint $ENDPOINT --private-key $PRIVATE_KEY
+sleep 10
+leo execute initialize --yes --local --broadcast
