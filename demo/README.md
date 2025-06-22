@@ -2,7 +2,7 @@
 
 ## Video
 
-The video can be found [here](./video.mp4) and on [YouTube]().
+The video can be found [here](./PessimisticZKFairLiquidation.mp4) and on [YouTube](https://youtu.be/8WIzdXOoUhU).
 
 ## Demo testing
 
