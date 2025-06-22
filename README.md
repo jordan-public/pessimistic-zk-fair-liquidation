@@ -18,7 +18,7 @@ Let's not make a mistake: ***delinquent trading positions should be liquidated**
 
 ![problem](./images/problem.png)
 
-Yet, we should ***not allow anyone to induce liquidations*** via market manipulation, MEV or Flash Loans.
+The protocol should ***not allow anyone to induce liquidations*** via market manipulation, MEV or Flash Loans.
 The problem in on-chain trading is that the liquidation points are public and the attacker can take advantage of this.
 
 ![problem](./images/attack.png)
@@ -77,6 +77,15 @@ stay with leveraged spot trading marketplace and leave the Perp implementation
 for the future.
 
 ## Solution
+
+The core problem is ***secrecy of the liquidation levels***. The
+protocol cannot actively protect them, unless we use extremely inefficient
+cryptographic methods such as FHE and/or MPC. To solve this, we keep
+the secret liquidation levels with the traders:
+
+![](./images/locationofsecretll.png)
+
+But the traders do not want to liquidate themselves! Read on...
 
 ### Why Pessimistic
 
