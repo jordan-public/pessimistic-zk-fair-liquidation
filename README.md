@@ -83,7 +83,7 @@ protocol cannot actively protect them, unless we use extremely inefficient
 cryptographic methods such as FHE and/or MPC. To solve this, we keep
 the secret liquidation levels with the traders:
 
-![](./images/locationofsecretll.png)
+![locationofsecretll](./images/locationofsecretll.png)
 
 But the traders do not want to liquidate themselves! Read on...
 
