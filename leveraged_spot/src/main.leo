@@ -139,21 +139,22 @@ program leveraged_spot.aleo {
         // price >= spot_price[0]; commented out for testing purposes
         fc.await();
 
-        // Record the low watermark for the current block.
-        let length: u32 = 0u32;
-        for i: u8 in 0u8..4u8 { // 0, 1, 2 for sequences of 0, 1, 10 blocks; in production this should be at least 7 (million blocks)
-            let start: u32 = length == 0u32 ? block_no : block_no % length;
-            // Calculate the key for the time sequence.
-            let sequence: TimeSequence = TimeSequence { start, length };
-            let key: field = BHP256::hash_to_field(sequence);
-            // Get the current low watermark for this key.
-            let current_low: u128 = Mapping::get_or_use(low_watermarks, key, price);
-            // If the current low is zero or the new price is lower, update it.
-            if (price < current_low) {
-                Mapping::set(low_watermarks, key, price);
-            }
-            length = length == 0u32 ? 1u32 : length * 10u32; // Increase the length for the next iteration
-        }
+        // !!! Block below commented out for testing purposes. We are not recording the current tick for testing, so we can spoof the trade time/block!
+        // // Record the low watermark for the current block.
+        // let length: u32 = 0u32;
+        // for i: u8 in 0u8..4u8 { // 0, 1, 2 for sequences of 0, 1, 10 blocks; in production this should be at least 7 (million blocks)
+        //     let start: u32 = length == 0u32 ? block_no : block_no % length;
+        //     // Calculate the key for the time sequence.
+        //     let sequence: TimeSequence = TimeSequence { start, length };
+        //     let key: field = BHP256::hash_to_field(sequence);
+        //     // Get the current low watermark for this key.
+        //     let current_low: u128 = Mapping::get_or_use(low_watermarks, key, price);
+        //     // If the current low is zero or the new price is lower, update it.
+        //     if (price < current_low) {
+        //         Mapping::set(low_watermarks, key, price);
+        //     }
+        //     length = length == 0u32 ? 1u32 : length * 10u32; // Increase the length for the next iteration
+        // }
     }
 
 //    async transition sell(voucher: Voucher, price: u128, block_no: u32, proof_starts: [u32; 32], proof_lengths: [u32; 32]) -> (token_registry.aleo/Token, Future) {
