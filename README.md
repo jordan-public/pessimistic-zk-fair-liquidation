@@ -1,3 +1,7 @@
+[This project, (Pessimistic ZK Fair Liquidations)](https://devfolio.co/projects/pessimistic-zk-fair-liquidations-fef4) won the following prize at the [ZK Hack Berlin 2025](https://zk-hack-berlin.devfolio.co) ([ZK Hack](https://zkhack.dev)) hackathon:
+
+🥇 [Best privacy-preserving Defi app on Aleo](https://devfolio.co/projects/pessimistic-zk-fair-liquidations-fef4)
+
 # Pessimistic ZK Fair Liquidation: Price Attack-free Leveraged Trading
 
 ## Demo and Video
